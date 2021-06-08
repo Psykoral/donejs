@@ -1,0 +1,7 @@
+<p>{{message}}</p>
+<p>
+    <a href="{{routeUrl (page='home')}}"
+       class="btn btn-primary btn-block btn-lg">
+        Home
+    </a>
+</p>
