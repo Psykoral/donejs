@@ -1,6 +1,6 @@
-import { DefineMap, route } from 'can';
-import RoutePushstate from 'can-route-pushstate';
+import { DefineMap, route, RoutePushstate } from 'can';
 import debug from 'can-debug#?./is-dev';
+import State from './state';
 
 //!steal-remove-start
 if(debug) {
@@ -9,43 +9,15 @@ if(debug) {
 //!steal-remove-end
 
 const AppViewModel = DefineMap.extend("AppViewModel", {
-  init() {
-    console.log('initial page:', route.data.page);
-    console.log('this.routeData:', this.routeData);
-    console.log('route:', route);
-  },
   env: {
     default: () => ({NODE_ENV:'development'})
   },
   title: {
     default: 'donejs-template'
   },
-  routeData: {
-    default: () => route.data
-  },
-  pageComponentModuleName: {
-    get() {
-      switch (this.routeData.page) {
-        case 'contact': return '~/pages/contact/';
-        default: return '~/pages/home/';
-      }
-    }
-  },
-  pageComponent: {
-    get() {
-      return steal.import(this.pageComponentModuleName)
-          .then(({default: Component}) => {
-            return new Component();
-          });
-    }
-  }
+  state: { default() { return State } },
+  routeData: { default() { return State.routeData } },
+  pageComponent: { default() { return State.pageComponent }},
 });
-
-route.urlData = new RoutePushstate();
-route.register("{page}", { page: "home" });
-route.data.on( "page", ( ev, newVal, oldVal ) => {
-  console.log('oldVal:', oldVal); //-> "recipes"
-  console.log('newVal:', newVal); //-> "settings"
-} );
 
 export default AppViewModel;
